@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+begin
+  this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+  $LOAD_PATH << File.expand_path("../../lib/", this_file)
+end
+
+require 'application'
+Application.run
