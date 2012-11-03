@@ -22,21 +22,20 @@ describe ApplicationEvents do
     end
   end
 
-  def output
+  def output_after_event(name, *args)
+    TestApplication.public_send name, *args
     TestApplication.instance.output
   end
 
   describe ".no_recipe" do
     it "displays a message" do
-      TestApplication.no_recipe
-      output.should include "No recipe found"
+      output_after_event(:no_recipe).should include "No recipe found"
     end
   end
 
   describe ".moving_file" do
     it "displays a message" do
-      TestApplication.moving_file "foo", "bar"
-      output.should include "Moving foo → bar"
+      output_after_event(:moving_file, "A", "B").should include "Moving A → B"
     end
   end
 end
