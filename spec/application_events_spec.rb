@@ -9,17 +9,9 @@ describe ApplicationEvents do
     extend ApplicationEvents
     attr_reader :output
 
-    def initialize
-      reset
-    end
-
-    def reset
-      @output = ""
-    end
-
-    def display(message)
-      @output << message
-    end
+    def initialize() reset end
+    def reset() @output = "" end
+    def display(message) @output << message end
   end
 
   def output_after_event(name, *args)
