@@ -1,4 +1,3 @@
-require 'highline'
 require 'application_events'
 require 'recipe'
 
@@ -7,7 +6,7 @@ class Application
     attr_accessor :instance
   end
 
-  def self.run(output=$stdout)
+  def self.run(output = $stdout)
     raise "No instance should be set already!" if self.instance
     self.instance = new(output)
     self.instance.run
@@ -29,7 +28,7 @@ class Application
     if File.exist? recipe_file
       Recipe.new(File.read(recipe_file), recipe_file).run
     else
-      @output.puts HighLine.color("No recipe found", :yellow)
+      Application.no_recipe
     end
   end
 

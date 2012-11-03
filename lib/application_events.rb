@@ -2,16 +2,32 @@
 require 'highline'
 
 module ApplicationEvents
+  def no_recipe
+    error "No recipe found"
+  end
+
   def moving_file(name, destination_dir)
     display [
-      color("Moving", :green),
+      color_action("Moving"),
       color(name, :yellow),
       "→",
-      color(destination_dir, :blue),
+      color_directory(destination_dir)
     ].join " "
   end
 
   private
+  def error(message)
+    display color(message, :red)
+  end
+
+  def color_action(action)
+    color action, :green
+  end
+
+  def color_directory(name)
+    color name, :blue
+  end
+
   def display(message)
     instance.display message if instance
   end
