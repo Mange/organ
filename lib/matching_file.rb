@@ -18,7 +18,7 @@ class MatchingFile
       @ui.moving_file @name, destination_dir
       FileUtils.mv @path, new_path
     else
-      @ui.file_conflict @name, destination_dir, :exist
+      @ui.moving_file_failed @name, destination_dir, :exist
     end
   end
 end

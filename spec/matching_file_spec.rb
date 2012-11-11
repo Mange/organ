@@ -6,7 +6,7 @@ describe MatchingFile do
   let(:ui) { double }
 
   before do
-    ui.stub moving_file: nil, file_conflict: nil
+    ui.stub moving_file: nil, moving_file_failed: nil
   end
 
   def matching_file(path)
@@ -77,7 +77,7 @@ describe MatchingFile do
       end
 
       it "signals the conflict to the application" do
-        ui.should_receive(:file_conflict).with(
+        ui.should_receive(:moving_file_failed).with(
           @new_file.filename,
           @old_file.dirname,
           :exist

@@ -31,13 +31,17 @@ class ConsoleUI < UI
     ].join " "
   end
 
-  def file_conflict(name, destination_dir, type)
+  def moving_file_failed(name, destination_dir, error_type)
+    error = {
+      exist: "exists already",
+    }[error_type]
+
     display [
-      color("Conflict", :red),
+      color("Cannot move", :red),
       color(name, :yellow),
       "→",
       color_directory(destination_dir),
-      color("(#{type})", :red)
+      color("(#{error})", :red)
     ].join " "
   end
 
