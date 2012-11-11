@@ -30,4 +30,10 @@ describe ApplicationEvents do
       output_after_event(:moving_file, "A", "B").should include "Moving A → B"
     end
   end
+
+  describe ".file_conflict" do
+    it "displays a message when file exist" do
+      output_after_event(:file_conflict, "A", "B", :exist).should include "Conflict A → B (exist)"
+    end
+  end
 end

@@ -20,6 +20,10 @@ module PathHelpers
       self
     end
 
+    def read
+      File.read @path
+    end
+
     def create_directory
       FileUtils.mkdir_p @path
       self
@@ -36,6 +40,10 @@ module PathHelpers
 
     def filename
       File.basename @path
+    end
+
+    def dirname
+      File.dirname @path
     end
 
     def expand_path

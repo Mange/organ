@@ -12,8 +12,13 @@ class MatchingFile
 
   def move_to(destination_dir, new_name = @name)
     new_dir = File.expand_path destination_dir
-    FileUtils.mkpath new_dir
-    Application.moving_file @name, destination_dir
-    FileUtils.mv @path, File.join(new_dir, new_name)
+    new_path = File.join new_dir, new_name
+    unless File.exist? new_path
+      FileUtils.mkpath new_dir
+      Application.moving_file @name, destination_dir
+      FileUtils.mv @path, new_path
+    else
+      Application.file_conflict @name, destination_dir, :exist
+    end
   end
 end

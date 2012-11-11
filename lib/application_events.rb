@@ -15,6 +15,16 @@ module ApplicationEvents
     ].join " "
   end
 
+  def file_conflict(name, destination_dir, type)
+    display [
+      color("Conflict", :red),
+      color(name, :yellow),
+      "→",
+      color_directory(destination_dir),
+      color("(#{type})", :red)
+    ].join " "
+  end
+
   private
   def error(message)
     display color(message, :red)

@@ -7,6 +7,10 @@ describe MatchingFile do
     Dir.new path(dirpath).tap { |dir| dir.create_directory }.to_s
   end
 
+  before do
+    Application.stub(moving_file: nil, file_conflict: nil)
+  end
+
   it "has a directory" do
     dir = directory '/tmp/path'
     MatchingFile.new(dir, "foo").directory.should == dir
@@ -59,6 +63,31 @@ describe MatchingFile do
 
       Application.should_receive(:moving_file).with("original name", "~/destination")
       matching_file.move_to "~/destination"
+    end
+
+    describe "when target already exist" do
+      before do
+        @new_file = path("one/some_file").write "new file"
+        @old_file = path("two/some_file").write "old file"
+        @matching_file = MatchingFile.new @new_file.directory, @new_file.filename
+      end
+
+      it "does not move the file" do
+        @matching_file.move_to @old_file.dirname
+
+        @new_file.should exist
+        @old_file.should exist
+        @old_file.read.should == "old file"
+      end
+
+      it "signals the conflict to the application" do
+        Application.should_receive(:file_conflict).with(
+          @new_file.filename,
+          @old_file.dirname,
+          :exist
+        )
+        @matching_file.move_to @old_file.dirname
+      end
     end
   end
 end
