@@ -16,6 +16,12 @@ class ConsoleUI < UI
 
   def initialize(output = $stdout)
     @output_stream = output
+    @color_scheme = HighLine::ColorScheme.new do |cs|
+      cs[:action]    = [:green]
+      cs[:directory] = [:blue]
+      cs[:error]     = [:red]
+      cs[:file]      = [:yellow]
+    end
   end
 
   def no_recipe
@@ -24,10 +30,10 @@ class ConsoleUI < UI
 
   def moving_file(name, destination_dir)
     display [
-      color_action("Moving"),
-      color(name, :yellow),
+      color("Moving", :action),
+      color(name, :file),
       "→",
-      color_directory(destination_dir)
+      color(destination_dir, :directory)
     ].join " "
   end
 
@@ -37,32 +43,24 @@ class ConsoleUI < UI
     }[error_type]
 
     display [
-      color("Cannot move", :red),
-      color(name, :yellow),
+      color("Cannot move", :error),
+      color(name, :file),
       "→",
-      color_directory(destination_dir),
-      color("(#{error})", :red)
+      color(destination_dir, :directory),
+      color("(#{error})", :error)
     ].join " "
   end
 
   private
   def error(message)
-    display color(message, :red)
-  end
-
-  def color_action(action)
-    color action, :green
-  end
-
-  def color_directory(name)
-    color name, :blue
+    display color(message, :error)
   end
 
   def display(message)
-    output_stream << message
+    output_stream.puts message
   end
 
-  def color(string, *colors)
-    HighLine.color(string, *colors)
+  def color(string, color)
+    HighLine.color(string, @color_scheme[color] || color)
   end
 end
