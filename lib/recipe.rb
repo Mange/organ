@@ -2,6 +2,10 @@ require 'matching_file'
 require 'episode_file'
 
 class Recipe
+  def self.load(path)
+    new File.read(path), path
+  end
+
   def initialize(contents, filename = nil)
     @contents = contents
     @filename = filename

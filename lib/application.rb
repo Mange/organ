@@ -26,7 +26,7 @@ class Application
 
   def run
     if File.exist? recipe_file
-      Recipe.new(File.read(recipe_file), recipe_file).run
+      Recipe.load(recipe_file).run
     else
       Application.no_recipe
     end
