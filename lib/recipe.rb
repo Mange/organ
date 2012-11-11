@@ -1,5 +1,4 @@
-require 'matching_file'
-require 'episode_file'
+require 'dsl'
 
 class Recipe
   def self.load(path)
@@ -13,35 +12,10 @@ class Recipe
 
   def run
     context = DSL.new
-    context.instance_eval(@contents, @filename)
-  end
-
-  class DSL
-    def initialize
-      @dir_stack = []
-    end
-
-    def directory(path)
-      @dir_stack << Dir.new(path)
-      yield
-    ensure
-      @dir_stack.pop
-    end
-
-    def match_episode(name)
-      match EpisodeFile.pattern(name) do |file|
-        yield file.extend(EpisodeFile)
-      end
-    end
-
-    def match(pattern)
-      directory = @dir_stack.last
-      directory.each do |name|
-        basename = File.basename(name)
-        if (matches = pattern.match(basename))
-          yield MatchingFile.new(directory, basename), matches
-        end
-      end
+    if @filename
+      context.instance_eval(@contents, @filename)
+    else
+      context.instance_eval(@contents)
     end
   end
 end

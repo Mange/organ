@@ -10,6 +10,11 @@ describe Recipe do
     Recipe.load("path/to/file").should == "instance"
   end
 
-  describe "running" do
+  it "can run the contents using the DSL" do
+    dsl = double
+    DSL.stub new: dsl
+
+    dsl.should_receive(:foo)
+    Recipe.new("foo").run
   end
 end
