@@ -6,6 +6,7 @@ require 'application'
 
 describe "Organ" do
   let(:output) { StringIO.new }
+  before(:each) { path(".").create_directory }
 
   def given_recipe(contents)
     path("~/.organrc").write(contents)

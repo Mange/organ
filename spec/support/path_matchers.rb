@@ -38,6 +38,10 @@ module PathHelpers
       File.basename @path
     end
 
+    def expand_path
+      File.expand_path @path
+    end
+
     private
     def open(*args, &block)
       FileUtils.mkdir_p File.dirname(@path)

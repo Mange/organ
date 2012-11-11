@@ -3,14 +3,19 @@ require 'episode_file'
 
 class DSL
   def initialize
-    @dir_stack = []
+    @dir_stack = [Dir.new(Dir.pwd)]
   end
 
   def directory(path)
-    @dir_stack << Dir.new(path)
+    new_path = File.expand_path(path, current_directory.path)
+    @dir_stack << Dir.new(new_path)
     yield
   ensure
     @dir_stack.pop
+  end
+
+  def current_directory
+    @dir_stack.last
   end
 
   def match_episode(name)
@@ -20,7 +25,7 @@ class DSL
   end
 
   def match(pattern)
-    directory = @dir_stack.last
+    directory = current_directory
     directory.each do |name|
       basename = File.basename(name)
       if (matches = pattern.match(basename))
