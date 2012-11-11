@@ -3,7 +3,8 @@ require 'spec_helper'
 require 'dsl'
 
 describe DSL do
-  let(:dsl) { DSL.new }
+  let(:ui) { double }
+  let(:dsl) { DSL.new ui }
   before(:each) { path(".").create_directory }
 
   describe "directory" do

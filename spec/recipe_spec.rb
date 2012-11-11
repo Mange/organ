@@ -11,10 +11,12 @@ describe Recipe do
   end
 
   it "can run the contents using the DSL" do
-    dsl = double
-    DSL.stub new: dsl
+    dsl = double "DSL"
+    ui = double "an UI"
+
+    DSL.should_receive(:new).with(ui).and_return dsl
 
     dsl.should_receive(:foo)
-    Recipe.new("foo").run
+    Recipe.new("foo").run(ui)
   end
 end

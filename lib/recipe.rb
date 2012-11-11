@@ -10,8 +10,8 @@ class Recipe
     @filename = filename
   end
 
-  def run
-    context = DSL.new
+  def run(ui)
+    context = DSL.new(ui)
     if @filename
       context.instance_eval(@contents, @filename)
     else

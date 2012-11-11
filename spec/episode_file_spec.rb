@@ -37,7 +37,8 @@ describe EpisodeFile do
   describe "decorating a MatchingFile" do
     def decorated_matching_file(full_path)
       file = path(full_path).create_file
-      matching_file = MatchingFile.new file.directory, file.filename
+      ui = double
+      matching_file = MatchingFile.new full_path, ui
       matching_file.extend(EpisodeFile)
     end
 

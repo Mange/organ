@@ -1,22 +1,18 @@
 # encoding: UTF-8
 require 'spec_helper'
-require 'singleton'
+require 'ui'
 
-describe ApplicationEvents do
-  class TestApplication
-    include Singleton
+describe ConsoleUI do
+  let(:output) { StringIO.new }
+  let(:ui) { ConsoleUI.new(output) }
 
-    extend ApplicationEvents
-    attr_reader :output
-
-    def initialize() reset end
-    def reset() @output = "" end
-    def display(message) @output << message end
+  before do
+    HighLine.stub use_color?: false
   end
 
   def output_after_event(name, *args)
-    TestApplication.public_send name, *args
-    TestApplication.instance.output
+    ui.send(name, *args)
+    output.string
   end
 
   describe ".no_recipe" do

@@ -1,7 +1,23 @@
 # encoding: UTF-8
 require 'highline'
 
-module ApplicationEvents
+class UI
+end
+
+class TestUI < UI
+  attr_reader :messages
+  def initialize(*) @messages = [] end
+  def method_missing(*call) @messages << call end
+  def respond_to?(*) true end
+end
+
+class ConsoleUI < UI
+  attr_reader :output_stream
+
+  def initialize(output = $stdout)
+    @output_stream = output
+  end
+
   def no_recipe
     error "No recipe found"
   end
@@ -39,7 +55,7 @@ module ApplicationEvents
   end
 
   def display(message)
-    instance.display message if instance
+    output_stream << message
   end
 
   def color(string, *colors)

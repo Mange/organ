@@ -1,34 +1,20 @@
-require 'application_events'
 require 'recipe'
+require 'ui'
 
 class Application
-  class << self
-    attr_accessor :instance
+  def self.run
+    new.run
   end
 
-  def self.run(output = $stdout)
-    raise "No instance should be set already!" if self.instance
-    self.instance = new(output)
-    self.instance.run
-  ensure
-    self.instance = nil
-  end
-
-  extend ApplicationEvents
-
-  def initialize(output)
-    @output = output
-  end
-
-  def display(message)
-    @output.puts message
+  def initialize(ui = ConsoleUI.new)
+    @ui = ui
   end
 
   def run
     if File.exist? recipe_file
-      Recipe.load(recipe_file).run
+      Recipe.load(recipe_file).run(@ui)
     else
-      Application.no_recipe
+      @ui.no_recipe
     end
   end
 

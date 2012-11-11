@@ -3,26 +3,22 @@ require 'spec_helper'
 require 'matching_file'
 
 describe MatchingFile do
-  def directory(dirpath = '~')
-    Dir.new path(dirpath).tap { |dir| dir.create_directory }.to_s
-  end
+  let(:ui) { double }
 
   before do
-    Application.stub(moving_file: nil, file_conflict: nil)
+    ui.stub moving_file: nil, file_conflict: nil
   end
 
-  it "has a directory" do
-    dir = directory '/tmp/path'
-    MatchingFile.new(dir, "foo").directory.should == dir
+  def matching_file(path)
+    MatchingFile.new(path, ui)
   end
 
   it "has a name" do
-    MatchingFile.new(directory, "foobar").name.should == "foobar"
+    matching_file("~/foobar").name.should == "foobar"
   end
 
   it "has a path" do
-    dir = directory "/tmp"
-    MatchingFile.new(dir, "good one").path.should == "/tmp/good one"
+    matching_file("/tmp/good one").path.should == "/tmp/good one"
   end
 
   describe "moving file" do
@@ -30,7 +26,7 @@ describe MatchingFile do
       original = path("one/some_file").create_file
       path("two/nested").create_directory
 
-      matching_file = MatchingFile.new original.directory, original.filename
+      matching_file = matching_file original.to_s
       matching_file.move_to("two/nested")
 
       path("two/nested/some_file").should exist
@@ -40,7 +36,7 @@ describe MatchingFile do
     it "creates the path if not already existing" do
       original = path("one/some_file").create_file
 
-      matching_file = MatchingFile.new original.directory, original.filename
+      matching_file = matching_file original.to_s
       matching_file.move_to("two/nested/again")
 
       path("two/nested/again/some_file").should exist
@@ -50,7 +46,7 @@ describe MatchingFile do
       original = path("one/some_file").create_file
       path("two/nested").create_directory
 
-      matching_file = MatchingFile.new original.directory, original.filename
+      matching_file = matching_file original.to_s
       matching_file.move_to "two/nested", "new_name"
 
       path("two/nested/new_name").should exist
@@ -59,9 +55,9 @@ describe MatchingFile do
     it "signals the move to the application" do
       path("~/destination").create_directory
       original = path("path/to/original name").create_file
-      matching_file = MatchingFile.new original.directory, original.filename
+      matching_file = matching_file original.to_s
 
-      Application.should_receive(:moving_file).with("original name", "~/destination")
+      ui.should_receive(:moving_file).with("original name", "~/destination")
       matching_file.move_to "~/destination"
     end
 
@@ -69,7 +65,7 @@ describe MatchingFile do
       before do
         @new_file = path("one/some_file").write "new file"
         @old_file = path("two/some_file").write "old file"
-        @matching_file = MatchingFile.new @new_file.directory, @new_file.filename
+        @matching_file = matching_file @new_file.to_s
       end
 
       it "does not move the file" do
@@ -81,7 +77,7 @@ describe MatchingFile do
       end
 
       it "signals the conflict to the application" do
-        Application.should_receive(:file_conflict).with(
+        ui.should_receive(:file_conflict).with(
           @new_file.filename,
           @old_file.dirname,
           :exist

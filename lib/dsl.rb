@@ -2,7 +2,8 @@ require 'matching_file'
 require 'episode_file'
 
 class DSL
-  def initialize
+  def initialize(ui)
+    @ui = ui
     @dir_stack = [Dir.new(Dir.pwd)]
   end
 
@@ -27,9 +28,10 @@ class DSL
   def match(pattern)
     directory = current_directory
     directory.each do |name|
-      basename = File.basename(name)
-      if (matches = pattern.match(basename))
-        yield MatchingFile.new(directory, basename), matches
+      next if name == "." || name == ".."
+      if (matches = pattern.match(name))
+        path = File.join(directory.path, name)
+        yield MatchingFile.new(path, @ui), matches
       end
     end
   end

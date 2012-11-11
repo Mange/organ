@@ -6,6 +6,9 @@ require 'application'
 
 describe "Organ" do
   let(:output) { StringIO.new }
+  let(:ui) { ConsoleUI.new(output) }
+  let(:application) { Application.new ui }
+
   before(:each) { path(".").create_directory }
 
   def given_recipe(contents)
@@ -13,7 +16,7 @@ describe "Organ" do
   end
 
   it "prints warning when no recipe exist" do
-    Application.run(output)
+    application.run
     output.string.should include("No recipe found")
   end
 
@@ -28,11 +31,11 @@ describe "Organ" do
       end
     RUBY
 
-    Application.run(output)
+    application.run
     path("~/otherpath").should be_directory
     path("~/otherpath/Fun times/Season 3").should be_directory
 
-    output_string = output.string
+    output_string = HighLine.uncolor output.string
     output_string.should include "Moving Fun Times.S03E77.scene.wow.so.cool.mkv → ~/otherpath/Fun times/Season 3"
   end
 end
